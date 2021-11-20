@@ -16,7 +16,7 @@ python cells_pts.py ../data/endo_cells.svg
 
 
 ---
-## Failed xperiment with image-based approach (and scikit-image)
+## Failed experiment with image-based approach (and scikit-image)
 
 <img src="image_proc/endo_eroded.png" alt="eroded/capped" height="300"><img src="image_proc/endo_eroded_fill.png" alt="filled" height="300">
 

@@ -37,4 +37,13 @@ out = splev(unew, tck)
 plt.plot(out[0],out[1], 'r-')
 print(out[0])
 
+out_file = "region4_bdy.csv"
+fp = open(out_file, "w")
+for idx in range(len(out[0])):
+    s = "%f , %f\n" % (out[0][idx],out[1][idx])
+    fp.write(s)
+print("--> ",out_file)
+
+plt.title(csv_file)
+
 plt.show()

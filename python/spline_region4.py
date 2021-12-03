@@ -1,3 +1,7 @@
+# fit a B-spline to region4 pts
+# python spline_region4.py region4.csv
+_author__ = "Randy Heiland"
+
 from scipy.interpolate import splprep, splev
 import sys
 from numpy import genfromtxt

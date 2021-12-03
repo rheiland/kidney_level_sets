@@ -1,3 +1,7 @@
+# fit a B-spline to region3 pts
+# python spline_region3.py region3.csv
+_author__ = "Randy Heiland"
+
 from scipy.interpolate import splprep, splev
 import sys
 from numpy import genfromtxt
@@ -28,7 +32,8 @@ tck, u = splprep([xv, yv], s=0)
 #new_pts = splev(u, tck)
 # plt.plot(new_pts[0],new_pts[1], 'g-')   # bad ~piecewise linear
 
-unew = np.arange(0, 1.01, 0.01)
+#unew = np.arange(0, 1.01, 0.01)
+unew = np.arange(0, 1.01, 0.02)
 out = splev(unew, tck)
 plt.plot(out[0],out[1], 'r-')
 print("out[0]= ",out[0])

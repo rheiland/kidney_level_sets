@@ -1,5 +1,5 @@
 # Compute distance from all (voxel) pts to nearest boundaries
-# python contour_dist_1_4.py region1_4_bdy.csv
+# python contour_signdist_1_4.py region1_4_bdy.csv
 _author__ = "Randy Heiland"
 
 import sys
@@ -54,12 +54,13 @@ for idx in range(n-1):
 def f(x, y):
     return np.sin(x) + np.cos(y)
 
-nvoxels = 80
 nvoxels = 10
 nvoxels = 20
-nvoxels = 40
+nvoxels = 80
+nvoxels = 50
 x = np.linspace(-800, 600, nvoxels)
 y = np.linspace(-600, 600, nvoxels)
+y = np.linspace(-700, 700, nvoxels)
 
 X, Y = np.meshgrid(x, y)
 Z = f(X, Y)   # Z.shape = (50, 50)
@@ -69,6 +70,7 @@ l1_p1 = np.array( [0.0, 0.0] )
 l2_p0 = np.array( [0.0, 0.0] )
 l2_p1 = np.array( [0.0, 0.0] )
 
+intpts = []
 # for every point (voxel center) in our grid...
 for iy in range(len(y)):
     yval = y[iy]
@@ -82,6 +84,10 @@ for iy in range(len(y)):
         # 1st pass: compute min distance to each bdy pt
         dist_min = 1.e6
         for idx in range(n-1):
+            if pts[idx,0] < 1.e-6 and pts[idx,1] < 1.e-6:  # hack separator "0,0" between regions
+                continue
+            elif pts[idx+1,0] < 1.e-6 and pts[idx+1,1] < 1.e-6:  # hack separator "0,0" between regions
+                continue
             xd = xval - pts[idx,0]
             yd = yval - pts[idx,1]
             dist2 = xd*xd + yd*yd
@@ -89,10 +95,10 @@ for iy in range(len(y)):
                 dist_min = dist2
             
             # how many intersections with boundaries - even or odd #?
-            l2_p0[0] = pts[idx,0]
-            l2_p0[1] = pts[idx,1]
-            l2_p1[0] = pts[idx+1,0]
-            l2_p1[1] = pts[idx+1,1]
+            # l2_p0[0] = pts[idx,0]
+            # l2_p0[1] = pts[idx,1]
+            # l2_p1[0] = pts[idx+1,0]
+            # l2_p1[1] = pts[idx+1,1]
             # ptint = seg_intersect(l1_p0,l1_p1, l2_p0,l2_p1)
             # xmin = min(lseg_p0[0], lseg_p1[0])
             # xmax = max(lseg_p0[0], lseg_p1[0])
@@ -105,10 +111,16 @@ for iy in range(len(y)):
         Z[iy,ix] = dist
 
         # 2nd pass: inside or outside a vessel region
-        intpts = []
+        intpts.clear()
         for idx in range(n-1):
+        # for idx in range(0,-1):
+            if pts[idx,0] < 1.e-6 and pts[idx,1] < 1.e-6:  # hack separator "0,0" between regions
+                continue
+            elif pts[idx+1,0] < 1.e-6 and pts[idx+1,1] < 1.e-6:  # hack separator "0,0" between regions
+                continue
             # how many intersections with boundaries - even or odd #?
             # if idx < 5:
+            if True:
                 # check each line seg on boundaries
                 l2_p0[0] = pts[idx,0]
                 l2_p0[1] = pts[idx,1]
@@ -122,14 +134,16 @@ for iy in range(len(y)):
                     px0 = l2_p1[0]
                     px1 = l2_p0[0]
                 # if ptint[0] > -800 and ptint[0] < 600 and ptint[1] > -600 and ptint[1] < 600:
-                if ptint[0] >= px0 and ptint[0] <= px1 and ptint[1] > -600 and ptint[1] < 600:
+                # if ptint[0] >= px0 and ptint[0] <= px1 and ptint[1] > -600 and ptint[1] < 600:
+                if ptint[0] >= px0 and ptint[0] <= px1 and ptint[1] > yval:
                     # print(idx,": ptint = ",ptint[0], ptint[1])
-                    intpts.append(ptint[0])
-        print(iy,ix,intpts)
-        if len(intpts) == 0 or len(intpts)%2 == 0:   # no intersection with bdys 
+                    intpts.append(ptint[1])
+        # print(iy,ix,intpts)
+        if len(intpts) == 0 or len(intpts)%2 == 0:   # check for outside bdy
+            # print("len(intpts)= ",len(intpts))
             Z[iy,ix] = -Z[iy,ix]
-        else:
-            print(intpts)
+        # else:
+            # print(intpts)
 
 
 # plt.contourf(X, Y, Z, 40, cmap='RdGy')

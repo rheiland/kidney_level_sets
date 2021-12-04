@@ -84,9 +84,9 @@ for iy in range(len(y)):
         # 1st pass: compute min distance to each bdy pt
         dist_min = 1.e6
         for idx in range(n-1):
-            if pts[idx,0] < 1.e-6 and pts[idx,1] < 1.e-6:  # hack separator "0,0" between regions
+            if math.fabs(pts[idx,0]) < 1.e-6 and math.fabs(pts[idx,1]) < 1.e-6:  # hack separator "0,0" between regions
                 continue
-            elif pts[idx+1,0] < 1.e-6 and pts[idx+1,1] < 1.e-6:  # hack separator "0,0" between regions
+            elif math.fabs(pts[idx+1,0]) < 1.e-6 and math.fabs(pts[idx+1,1]) < 1.e-6:  # hack separator "0,0" between regions
                 continue
             xd = xval - pts[idx,0]
             yd = yval - pts[idx,1]
@@ -114,9 +114,9 @@ for iy in range(len(y)):
         intpts.clear()
         for idx in range(n-1):
         # for idx in range(0,-1):
-            if pts[idx,0] < 1.e-6 and pts[idx,1] < 1.e-6:  # hack separator "0,0" between regions
+            if math.fabs(pts[idx,0]) < 1.e-6 and math.fabs(pts[idx,1]) < 1.e-6:  # hack separator "0,0" between regions
                 continue
-            elif pts[idx+1,0] < 1.e-6 and pts[idx+1,1] < 1.e-6:  # hack separator "0,0" between regions
+            elif math.fabs(pts[idx+1,0]) < 1.e-6 and math.fabs(pts[idx+1,1]) < 1.e-6:  # hack separator "0,0" between regions
                 continue
             # how many intersections with boundaries - even or odd #?
             # if idx < 5:

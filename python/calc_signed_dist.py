@@ -70,6 +70,8 @@ nvoxels = 20
 nvoxels = 80
 nx_voxels = 88
 ny_voxels = 75
+# nx_voxels = 20
+# ny_voxels = 20
 # x = np.linspace(-800, 600, nvoxels)
 # y = np.linspace(-700, 700, nvoxels)
 x = np.linspace(-750, 1000, nx_voxels)
@@ -121,7 +123,7 @@ for iy in range(len(y)):
             #     # print("-- no intersection.")
 
         dist = math.sqrt(dist_min)
-        Z[iy,ix] = dist
+        Z[iy,ix] = -dist
 
         # 2nd pass: inside or outside a vessel region
         intpts.clear()
@@ -186,9 +188,11 @@ norm = MidpointNormalize( midpoint = 0 )
 # interpolation='none',norm=norm,cmap=cmap
 #plt.contourf(X, Y, Z, 40, cmap='PiYG')
 #plt.contourf(X, Y, Z, 40, norm=norm, cmap=cmap)
-plt.contourf(X, Y, Z, 40, norm=norm, cmap='seismic')
+CS1 = plt.contourf(X, Y, Z, 40, norm=norm, cmap='seismic')
+CS2 = plt.contour(X, Y, Z, [0.0])
+# CS2.collections[0].set_linewidth(2)
+# CS2.collections[0].set_color('black')
 
-# plt.contourf(X, Y, Z, 40)
-plt.colorbar() 
+plt.colorbar(CS1) 
 plt.title("signed dist; grid: " + str(nx_voxels) + "x" + str(ny_voxels))
 plt.show()

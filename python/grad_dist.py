@@ -10,7 +10,7 @@ import math
 import matplotlib.pyplot as plt
 # plt.style.use('seaborn-white')
 import numpy as np
-from numpy import genfromtxt
+from numpy import genfromtxt, savetxt
 from matplotlib.colors import BoundaryNorm
 import matplotlib.colors as mcolors
 
@@ -45,10 +45,10 @@ nx_voxels = 88
 ny_voxels = 75
 
 # with double resolution of domain, i.e., dx=dy=dz=10
-nx_voxels = 175
-ny_voxels = 150
+# nx_voxels = 175
+# ny_voxels = 150
 
-# # increase again, dx=dy=dz=2
+# # # increase again, dx=dy=dz=2
 # nx_voxels = 875
 # ny_voxels = 750
 
@@ -68,14 +68,21 @@ grad_v, grad_u = np.gradient(Z)  # 2nd arg is the voxel width?
 #grad = np.gradient(Z, 20.0)  # 2nd arg is the voxel width?
 #grad = np.gradient(Z)  # 2nd arg is the voxel width?
 #print("type(grad) = ",type(grad))
+print("type(grad_v) = ",type(grad_v))
 #print("grad.shape = ",grad.shape)
+print("grad_v.shape = ",grad_v.shape)
 #print("len(grad) = ",len(grad))
 #print("grad[0].shape = ",grad[0].shape)
 #print("grad[1].shape = ",grad[1].shape)
 
 print("Z.min() = ",Z.min())
 print("Z.max() = ",Z.max())
-out_file = "Z_dist.dat"
+
+out_file1 = "grad_x.dat"
+out_file2 = "grad_y.dat"
+savetxt(out_file1, grad_u)
+savetxt(out_file2, grad_v)
+print(" --> ",out_file1,out_file2)
 #np.savetxt(out_file,Z,delimiter=',')
 #print("--> ",out_file, " (rename to read as a substrate)")
 

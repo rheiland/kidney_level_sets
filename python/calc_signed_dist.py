@@ -1,5 +1,9 @@
 # Compute distance from all (voxel) pts to nearest boundaries
-# python contour_signdist_1_4.py region1_4_bdy.csv
+#
+# python calc_signed_dist.py pbm_gbm_capped.csv
+#
+# Edit to change grid resolution (nx_voxels, ny_voxels) or signed vs. unsigned distance (signed_dist_flag)
+#
 _author__ = "Randy Heiland"
 
 import sys
@@ -17,6 +21,12 @@ pts = genfromtxt(csv_file, delimiter=',')
 print(pts.shape)
 n = len(pts[:,0])
 print("# pts = ",n)
+
+signed_dist_flag = False
+signed_dist_flag = True
+# signed_flag = int(sys.argv[2])
+# if signed_flag > 0:
+#     signed_dist_flag = True
 
 class MidpointNormalize(mcolors.Normalize):
     def __init__(self, vmin=None, vmax=None, midpoint=None, clip=False):
@@ -68,10 +78,20 @@ def f(x, y):
 nvoxels = 10
 nvoxels = 20
 nvoxels = 80
+
 nx_voxels = 88
 ny_voxels = 75
-# nx_voxels = 20
-# ny_voxels = 20
+
+# with double resolution of domain, i.e., dx=dy=dz=10
+# nx_voxels = 175
+# ny_voxels = 150
+
+# increase again, dx=dy=dz=2
+# nx_voxels = 875
+# ny_voxels = 750
+
+print("Using grid nx x ny = ",nx_voxels,ny_voxels)
+
 # x = np.linspace(-800, 600, nvoxels)
 # y = np.linspace(-700, 700, nvoxels)
 x = np.linspace(-750, 1000, nx_voxels)
@@ -84,6 +104,7 @@ l1_p0 = np.array( [0.0, 0.0] )
 l1_p1 = np.array( [0.0, 0.0] )
 l2_p0 = np.array( [0.0, 0.0] )
 l2_p1 = np.array( [0.0, 0.0] )
+
 
 intpts = []
 # for every point (voxel center) in our grid...
@@ -123,7 +144,10 @@ for iy in range(len(y)):
             #     # print("-- no intersection.")
 
         dist = math.sqrt(dist_min)
-        Z[iy,ix] = -dist
+        if signed_dist_flag:
+            Z[iy,ix] = -dist
+        else:
+            Z[iy,ix] = dist
 
         # 2nd pass: inside or outside a vessel region
         intpts.clear()
@@ -154,7 +178,7 @@ for iy in range(len(y)):
                     # print(idx,": ptint = ",ptint[0], ptint[1])
                     intpts.append(ptint[1])
         # print(iy,ix,intpts)
-        if len(intpts) == 0 or len(intpts)%2 == 0:   # check for outside bdy
+        if signed_dist_flag and (len(intpts) == 0 or len(intpts)%2 == 0):   # check for outside bdy
             # print("len(intpts)= ",len(intpts))
             Z[iy,ix] = -Z[iy,ix]
         # else:
@@ -166,6 +190,8 @@ print("Z.max() = ",Z.max())
 out_file = "Z_dist.dat"
 np.savetxt(out_file,Z,delimiter=',')
 print("--> ",out_file, " (rename to read as a substrate)")
+
+fig = plt.figure(figsize=(9,7))
 
 # plt.contourf(X, Y, Z, 40, cmap='RdGy')
 
@@ -188,11 +214,16 @@ norm = MidpointNormalize( midpoint = 0 )
 # interpolation='none',norm=norm,cmap=cmap
 #plt.contourf(X, Y, Z, 40, cmap='PiYG')
 #plt.contourf(X, Y, Z, 40, norm=norm, cmap=cmap)
-CS1 = plt.contourf(X, Y, Z, 40, norm=norm, cmap='seismic')
-CS2 = plt.contour(X, Y, Z, [0.0])
+ncontours = 20
+CS1 = plt.contourf(X, Y, Z, ncontours, norm=norm, cmap='seismic')
+zval = 0.0
+CS2 = plt.contour(X, Y, Z, [zval])
 # CS2.collections[0].set_linewidth(2)
 # CS2.collections[0].set_color('black')
 
 plt.colorbar(CS1) 
-plt.title("signed dist; grid: " + str(nx_voxels) + "x" + str(ny_voxels))
+if signed_dist_flag:
+    plt.title("signed dist; grid: " + str(nx_voxels) + "x" + str(ny_voxels) + "; zcont="+str(zval))
+else:
+    plt.title("unsigned dist; grid: " + str(nx_voxels) + "x" + str(ny_voxels) + "; zcont="+str(zval))
 plt.show()

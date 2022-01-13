@@ -84,8 +84,8 @@ nx_voxels = 88
 ny_voxels = 75
 
 # with double resolution of domain, i.e., dx=dy=dz=10
-#nx_voxels = 175
-#ny_voxels = 150
+nx_voxels = 175
+ny_voxels = 150
 
 # increase again, dx=dy=dz=2
 # nx_voxels = 875
